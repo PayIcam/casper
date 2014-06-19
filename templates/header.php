@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8">
-    <title><?php echo $title ?></title>
+    <title><?= $title ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     <!-- Le styles -->
@@ -25,7 +25,7 @@
     <div role="navigation" class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href=""><img src="img/payutc_rect_110.png" alt="<?php echo $title ?>"></a>
+          <a class="navbar-brand" href=""><?= $title ?></a>
         </div>
         <div class="navbar-collapse collapse">
           <?php if($loggedin): ?>

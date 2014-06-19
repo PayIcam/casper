@@ -291,7 +291,7 @@ $app->post('/validation', function() use ($app) {
     try {
         if($_POST['method'] == "direct"){
             if(empty($_POST['cgu'])){
-                throw new \Exception("Vous devez accepter les CGU de payutc pour continuer");
+                throw new \Exception("Vous devez accepter les CGU de PayIcam pour continuer");
             }
             
             $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->doTransaction(array(

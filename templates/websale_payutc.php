@@ -5,7 +5,7 @@
         <?php endif ?>
             <h1>Bonjour <?php echo $firstname ?></h1>
 
-            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via payutc.</p> 
+            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via PayIcam.</p> 
             
             <table class="table table-hover" id="opTable">
                 <tbody>
@@ -24,7 +24,7 @@
                 </tbody>
             </table>
             
-            <p>Voici les opérations sur ton compte payutc :</p>
+            <p>Voici les opérations sur ton compte PayIcam :</p>
             
             <form action="validation" method="post">
                 <input type="hidden" name="tra_id" value="<?php echo $_GET['tra_id'] ?>" />
@@ -51,7 +51,7 @@
                         }
                         $maxChamp = $maxReload+$total;
                         ?>
-                        <tr id="reloadLine" data-placement="right" data-content="<?php echo ($total-$solde > 0) ? 'Pour régler cet achat, tu dois d\'abord  recharger de '.format_amount($minChamp).' €. Tu peux augmenter ce montant pour garder du crédit sur ton compte.' : 'Tu peux recharger ton compte payutc au cours de cette opération' ?>"  data-original-title="Rechargement payutc" data-trigger="hover">
+                        <tr id="reloadLine" data-placement="right" data-content="<?php echo ($total-$solde > 0) ? 'Pour régler cet achat, tu dois d\'abord  recharger de '.format_amount($minChamp).' €. Tu peux augmenter ce montant pour garder du crédit sur ton compte.' : 'Tu peux recharger ton compte PayIcam au cours de cette opération' ?>"  data-original-title="Rechargement PayIcam" data-trigger="hover">
                             <?php if($canReload): ?>
                             <td>
                                 <?php if($solde >= $total): ?>

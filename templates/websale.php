@@ -5,7 +5,7 @@
         <?php endif ?>
             <h1>Bienvenue</h1>
 
-            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via payutc.</p> 
+            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via PayIcam.</p> 
             
             <form action="validation" method="post">
                 <input type="hidden" name="tra_id" value="<?php echo $_GET['tra_id'] ?>" />
@@ -29,13 +29,13 @@
                 </table>
 
                 <div id="boutons1" class="center">
-                    <p><a href="login?tra_id=<?php echo $tra_id ?>&token=<?php echo $token ?>" class="btn btn-primary" title="Connexion à payutc" />J'ai un compte payutc</a></p>
-                    <p><a href="#" class="btn btn-primary" title="Je n'ai pas de compte payutc" id="noaccount"/>Je n'ai pas de compte payutc</a></p>
+                    <p><a href="login?tra_id=<?php echo $tra_id ?>&token=<?php echo $token ?>" class="btn btn-primary" title="Connexion à PayIcam" />J'ai un compte PayIcam</a></p>
+                    <p><a href="#" class="btn btn-primary" title="Je n'ai pas de compte PayIcam" id="noaccount"/>Je n'ai pas de compte PayIcam</a></p>
                 </div>
                 <div id="boutons2">
                     <p class="checkbox">
                         <label>
-                            <input type="checkbox" name="cgu" id="cgu"> J'accepte les <a href="cgu" target="_blank" >CGU</a> de payutc
+                            <input type="checkbox" name="cgu" id="cgu"> J'accepte les <a href="cgu" target="_blank" >CGU</a> de PayIcam
                         </label>
                     </p>
                     <p><input type="submit" class="btn btn-primary" value="Payer par CB" id="gopay" /></p>

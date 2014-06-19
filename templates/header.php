@@ -8,7 +8,7 @@
     <!-- Le styles -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
-    <link rel="shortcut icon" href="img/favicon.ico" />
+    <link rel="shortcut icon" href="img/favicon.png" />
 
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

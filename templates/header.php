@@ -31,7 +31,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href=""><?= $title ?></a>
+          <a class="navbar-brand" href=""><img src="img/PayIcam-h30-white.png" alt="<?= $title ?>"></a>
         </div>
         <div class="navbar-collapse collapse">
           <?php if($loggedin): ?>

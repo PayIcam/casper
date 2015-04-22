@@ -145,7 +145,7 @@ $app->post('/virement', function() use ($app) {
             "message" => $_POST['message']
         ));
         
-        $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € à réussi.');
+        $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € a réussi.');
     }
     catch(\JsonClient\JsonException $e){
         $app->flash('virement_erreur', $e->getMessage());
@@ -366,7 +366,7 @@ $app->get('/login', function() use ($app) {
         }
         
         // Redirection vers le CAS
-        $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/login?service=".Config::get("casper_url").'login');
+        $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."login?service=".Config::get("casper_url").'login');
     } else {
         // Connexion au serveur avec le ticket CAS
         try {

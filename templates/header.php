@@ -34,6 +34,9 @@
           <a class="navbar-brand" href=""><img src="img/PayIcam-h30-white.png" alt="<?= $title ?>"></a>
         </div>
         <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="../">Accueil PayIcam</a></li>
+          </ul>
           <?php if($loggedin): ?>
           <p class="navbar-text navbar-right"><a href="logout">déconnexion</a></p>
           <?php endif ?>

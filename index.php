@@ -175,8 +175,9 @@ $app->post('/register', function() use ($app) {
         // Appel serveur
         $result = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->register();
         
-        // Si ok, go vers la page d'accueil
-        $app->redirect($app->urlFor('home'));
+        // Si ok, go vers la page d'accueil de payicam
+        $app->redirect("../");
+        // $app->redirect($app->urlFor('home'));
     }
     catch(\JsonClient\JsonException $e){
         // Si on a une erreur on l'affiche

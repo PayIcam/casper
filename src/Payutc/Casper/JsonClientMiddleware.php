@@ -84,7 +84,10 @@ class JsonClientMiddleware extends \Slim\Middleware
             // If no user loaded, go to cas
             if($app->request()->getResourceUri() != '/login' && $app->request()->getResourceUri() != '/register' && empty($status->user)){
                 $app->getLog()->debug("No user logged in, redirect to login route");
-                $app->response()->redirect($app->urlFor('login'));
+                if(!empty($_GET['tra_id']) && !empty($_GET['token']))
+                    $app->response()->redirect($app->urlFor('login')."?tra_id=".$_GET['tra_id']."&token=".$_GET['token']);
+                else
+                    $app->response()->redirect($app->urlFor('login'));
         	}
     
             // Save user data in environment

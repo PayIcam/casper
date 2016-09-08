@@ -2,6 +2,7 @@
     <h1>Bonjour, <?php echo $userDetails["firstname"] ?> <?php echo $userDetails["lastname"] ?> !</h1>
     <br />
     <p>Ton solde PayIcam est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong></p>
+   
 </div>
 <div class="row">
     <div class="col-md-4">
@@ -38,6 +39,43 @@
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
         <?php endif ?> 
+
+
+        <h2><a name="rechargement_papercut" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Créditer PaperCut</a></h2>
+        <?php if(!empty($canReloadPapercut)): ?>
+            <?php if(isset($flash['reloadPaperCut_erreur'])): ?>
+                <div class="alert alert-danger"><?php echo $flash['reloadPaperCut_erreur'] ?></div>
+            <?php endif ?>
+            <?php if(isset($flash['reloadPaperCut_ok'])): ?>
+                <div class="alert alert-success"><?php echo $flash['reloadPaperCut_ok'] ?></div>
+            <?php endif ?>
+            <form action="reload_papercut" method="post" class="well form-inline" role="form">
+                <p>Solde PaperCut actuel: <strong><?= "20€" ?></strong></p>
+                <div class="row">
+                    <div class="col-xs-5">
+                        <div class="input-group amount-container">
+                            <?php
+                            if(isset($flash['reloadPaperCut_value'])) {
+                                $reload_value = $flash['reloadPaperCut_value'];
+                            } else {
+                                $reload_value = "";
+                            }
+                            ?>
+                            <input name="montant" type="number" placeholder="0,00" class="form-control amount-selector" max="<?php echo $userDetails["credit"]?>" value="<?php echo $reload_value ?>" step="0.05" />
+                            <span class="input-group-addon">€</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <button type="submit" class="btn btn-primary "><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Créditer</button>
+                    </div>
+                </div>                 
+            </form>
+        <?php else: ?>
+            <div class="alert alert-success">
+                Ton compte ne peut être rechargé : <?php echo $cannotReloadPaperCutMessage ?>
+            </div>
+        <?php endif ?> 
+
         <h2><a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de PayIcam" class="noul">Virement à un ami </a></h2>
         <?php if(isset($flash['virement_ok'])): ?>
             <div class="alert alert-success">

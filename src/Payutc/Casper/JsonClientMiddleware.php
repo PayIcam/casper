@@ -9,7 +9,8 @@ class JsonClientMiddleware extends \Slim\Middleware
     protected $services = array(
         "RELOAD",
         "MYACCOUNT",
-        "TRANSFER"
+        "TRANSFER",
+        "RELOADPAPERCUT"
     );
     
     public function call()

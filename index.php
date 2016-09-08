@@ -1,4 +1,11 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
+
 // Slim
 require 'vendor/autoload.php';
 use \Payutc\Casper\Config;
@@ -43,6 +50,7 @@ $app->get('/', function() use($app) {
     $pageData = array();
     
     $pageData["canReload"] = true;
+    $pageData["canReloadPapercut"] = true;
     try {
         $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
         $pageData["maxReload"] = $reloadInfo->max_reload;
@@ -131,6 +139,31 @@ $app->post('/reload', function() use ($app) {
         $app->getLog()->error("Reload failed: ".$e->getMessage());
         $app->response()->redirect($app->urlFor('home'));
     }
+});
+
+$app->post('/reload_papercut', function() use ($app) {
+    if(empty($_POST["montant"])) {
+        $app->flash('error_reload', "Saisissez un montant");
+        $app->response()->redirect($app->urlFor('home'));
+    }
+
+    $amount = parse_user_amount($_POST['montant']);
+
+    try {
+        $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->reload_papercut(array(
+            "amount" => $amount*1
+        ));
+       var_dump($amount);
+       var_dump(unserialize($resultat));
+
+        $app->flash('reloadPaperCut_ok', 'Le virement de '.format_amount($resultat).' € a réussi.');
+    } catch(\JsonClient\JsonException $e) {
+        echo $e->getMessage();
+        $app->flash('reloadPaperCut_erreur', $e->getMessage());
+        $app->flash('reloadPaperCut_value', $amount/100);
+    }
+
+    // $app->response()->redirect($app->urlFor('home'));
 });
 
 // Virement à un ami

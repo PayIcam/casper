@@ -12,29 +12,29 @@ class JsonClientMiddleware extends \Slim\Middleware
         "TRANSFER",
         "RELOADPAPERCUT"
     );
-    
+
     public function call()
     {
         // Get reference to application and environment
         $app = $this->app;
         $env = $app->environment();
-        
+
         // If we are in websale gateway
         if (strpos($app->request()->getPathInfo(), '/validation') === 0) {
             // Consider us as logged in if we already have a cookie
             $env["loggedin"] = JsonClientFactory::getInstance()->getCookie() ? true : false;
-    
+
             // Create the client for WEBSALECONFIRM
             $app->getLog()->debug("Creating json_client for service WEBSALECONFIRM");
             JsonClientFactory::getInstance()->createClient("WEBSALECONFIRM");
-    
+
             // Get user and app status
             $status = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->getStatus();
 
             // Connect the application if required
             if(empty($status->application)){
                 $app->getLog()->debug("No app logged in for WEBSALECONFIRM, calling loginApp");
-        
+
                 try {
                     JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->loginApp(array(
                         "key" => Config::get("application_key")
@@ -50,7 +50,7 @@ class JsonClientMiddleware extends \Slim\Middleware
                 $env["loggedin"] = false;
         	}
         }
-        
+
         // If not in websale or in websale with a logged in user
         if ($app->request()->getResourceUri() != '/cgu' /*&& ( strpos($app->request()->getPathInfo(), '/validation') !== 0 || $env["loggedin"])*/ ) {
             // If we have no cookie, redirect to login
@@ -58,13 +58,13 @@ class JsonClientMiddleware extends \Slim\Middleware
                 $app->getLog()->debug("No cookie, redirecting to login");
                 $app->response()->redirect($app->urlFor('login'));
             }
-        
+
             // Create the client for each service (if it does not exist)
             foreach($this->services as $service){
                 $app->getLog()->debug("Creating json_client for service $service");
                 JsonClientFactory::getInstance()->createClient($service);
             }
-        
+
             // Get user and app status
             $status = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getStatus();
 
@@ -81,7 +81,7 @@ class JsonClientMiddleware extends \Slim\Middleware
                     throw $e;
                 }
             }
-    
+
             // If no user loaded, go to cas
             if($app->request()->getResourceUri() != '/login' && $app->request()->getResourceUri() != '/register' && empty($status->user)){
                 $app->getLog()->debug("No user logged in, redirect to login route");
@@ -90,11 +90,11 @@ class JsonClientMiddleware extends \Slim\Middleware
                 else
                     $app->response()->redirect($app->urlFor('login'));
         	}
-    
+
             // Save user data in environment
             $env["user_data"] = $status->user_data;
         }
-        
+
         try {
             // Run inner middleware and application
             $this->next->call();

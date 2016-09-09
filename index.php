@@ -45,10 +45,10 @@ $app->get('/', function() use($app) {
         "title" => Config::get("title"),
         "loggedin" => true
     ));
-    
+
     // The array that will be sent to the template
     $pageData = array();
-    
+
     $pageData["canReload"] = true;
     $pageData["canReloadPapercut"] = true;
     try {
@@ -60,21 +60,21 @@ $app->get('/', function() use($app) {
         $pageData["canReload"] = false;
         $pageData["cannotReloadMessage"] = $e->getMessage();
     }
-    
+
     $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
-    
+
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
     $pageData["historique"] = $account->historique;
-    
+
     $env = $app->environment();
     $pageData["userDetails"] = array(
         "firstname" => $env["user_data"]->firstname,
         "lastname" => $env["user_data"]->lastname,
         "credit" => $account->credit
     );
-    
+
     $app->render('main.php', $pageData);
-    
+
     $app->render('footer.php');
 })->name('home');
 
@@ -83,7 +83,7 @@ $app->get('/block', function() use ($app) {
     try {
         JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
             "blocage" => true
-        ));        
+        ));
     }
     catch(\JsonClient\JsonException $e){
         $app->flash('block_erreur', $e->getMessage());
@@ -97,7 +97,7 @@ $app->get('/unblock', function() use ($app) {
     try {
         JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
             "blocage" => false
-        ));        
+        ));
     }
     catch(\JsonClient\JsonException $e){
         $app->flash('block_erreur', $e->getMessage());
@@ -112,8 +112,8 @@ $app->get('/ajax', function() use ($app) {
         $search = JsonClientFactory::getInstance()->getClient("RELOAD")->userAutocomplete(array(
             "queryString" => $_GET["q"]
         ));
-        
-        echo json_encode($search);        
+
+        echo json_encode($search);
     }
 });
 
@@ -125,7 +125,7 @@ $app->post('/reload', function() use ($app) {
     }
 
     $amount = parse_user_amount($_POST['montant']);
-    
+
     try {
         $reloadUrl = JsonClientFactory::getInstance()->getClient("RELOAD")->reload(array(
             "amount" => $amount,
@@ -147,43 +147,71 @@ $app->post('/reload_papercut', function() use ($app) {
         $app->response()->redirect($app->urlFor('home'));
     }
 
+    $status = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getStatus();
+    $isCotisant = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isCotisant();
+    $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
+    $account->credit;
+
     $amount = parse_user_amount($_POST['montant']);
 
-    try {
-        $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->reload_papercut(array(
-            "amount" => $amount*1
-        ));
-       var_dump($amount);
-       var_dump(unserialize($resultat));
+    if(!$isCotisant) {
+        $app->flash('reloadPaperCut_erreur', "Les non cotisants ne peuvent pas utiliser la fonction reloadPapercut.");
+    } else if($amount < 0) {
+        $app->flash('reloadPaperCut_erreur', "Tu ne peux pas faire un virement négatif (bien essayé)");
+    } else if($amount == 0) {
+        $app->flash('reloadPaperCut_erreur', "Pas de montant saisi");
+    } else if($account->credit < $amount) {
+        $app->flash('reloadPaperCut_erreur', "Tu n'as pas assez d'argent pour réaliser ce virement");
+    } else {
+        // Connect the application if required
+        if(empty($status->application)){
+            $app->getLog()->debug("No app logged in for WEBSALECONFIRM, calling loginApp");
+            try {
+                JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->loginApp(array(
+                    "key" => Config::get("application_key")
+                ));
+            } catch (\JsonClient\JsonException $e) {
+                $app->getLog()->error("Application login error for RELOADPAPERCUT: ".$e->getMessage());
+                throw $e;
+            }
+        }
 
-        $app->flash('reloadPaperCut_ok', 'Le virement de '.format_amount($resultat).' € a réussi.');
-    } catch(\JsonClient\JsonException $e) {
-        echo $e->getMessage();
-        $app->flash('reloadPaperCut_erreur', $e->getMessage());
-        $app->flash('reloadPaperCut_value', $amount/100);
+        try {
+            $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->reload_papercut(array(
+                "amount" => $amount*1
+            ));
+            if ($resultat == $amount)
+                $app->flash('reloadPaperCut_ok', 'Le virement de '.format_amount($resultat).' € a réussi.');
+            else
+                $app->flash('reloadPaperCut_erreur', "qqch de louche s'est passé: ".$resultat);
+        } catch(\JsonClient\JsonException $e) {
+            echo $e->getMessage();
+            $app->flash('reloadPaperCut_erreur', $e->getMessage());
+            $app->flash('reloadPaperCut_value', abs($amount/100));
+        }
     }
 
-    // $app->response()->redirect($app->urlFor('home'));
+    $app->response()->redirect($app->urlFor('home'));
 });
 
 // Virement à un ami
 $app->post('/virement', function() use ($app) {
     // Récupèration du montant en cents
     $montant = parse_user_amount($_POST['montant']);
-    
+
     try {
         $virement = JsonClientFactory::getInstance()->getClient("TRANSFER")->transfer(array(
             "amount" => $montant,
             "userID" => $_POST['userId'],
             "message" => $_POST['message']
         ));
-        
+
         $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € a réussi.');
     }
     catch(\JsonClient\JsonException $e){
         $app->flash('virement_erreur', $e->getMessage());
     }
-    
+
     // Retour vers la page d'accueil
     $app->response()->redirect($app->urlFor('home'));
 });
@@ -207,7 +235,7 @@ $app->post('/register', function() use ($app) {
     try {
         // Appel serveur
         $result = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->register();
-        
+
         // Si ok, go vers la page d'accueil de payicam
         $app->redirect("../");
         // $app->redirect($app->urlFor('home'));
@@ -215,7 +243,7 @@ $app->post('/register', function() use ($app) {
     catch(\JsonClient\JsonException $e){
         // Si on a une erreur on l'affiche
         $app->flash('register_erreur', $e->getMessage());
-        
+
         // On n'a pas réussi à s'enregistrer, retour vers la charte
         $app->redirect($app->urlFor('register'));
     }
@@ -230,17 +258,17 @@ $app->get('/validation', function() use ($app) {
         $app->getLog()->error("No transaction data recieved");
         $app->redirect($app->urlFor('home'));
     }
-    
+
     // Get environment
     $env = $app->environment();
-    
+
     // Get data the transaction data
     try {
         $transactionData = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->getTransactionInfo(array(
             'tra_id' => $_GET['tra_id'],
             'token' => $_GET['token']
         ));
-        
+
         // If this transaction is not waiting
         if($transactionData->status != 'W'){
             throw new \Exception("Cette transaction n'est pas en attente.");
@@ -248,26 +276,26 @@ $app->get('/validation', function() use ($app) {
     }
     catch(\Exception $e){
         $app->getLog()->error("Cannot get transaction ".$_GET['tra_id']." with token ".$_GET['token'].": ".$e->getMessage());
-        
+
         $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
         $app->render('error.php', array('login_erreur' => "Impossible de récupérer la transaction"));
         $app->render('footer.php');
         $app->stop();
     }
-    
+
     $app->render('header.php', array(
         "title" => Config::get("title"),
         "loggedin" => $env["loggedin"]
     ));
-    
+
     $products = array();
     foreach($transactionData->products as $product) {
         $products[$product->id] = $product;
     }
-    
+
     if($env["loggedin"]){
         $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
-        
+
         $canReload = true;
         $maxReload = 10000-$account->credit;
         $minReload = 1000;
@@ -281,7 +309,7 @@ $app->get('/validation', function() use ($app) {
             $canReload = false;
             $cannotReloadMessage = $e->getMessage();
         }
-        
+
         $app->render('websale_payutc.php', array(
             "purchases" => $transactionData->purchases,
             "products" => $products,
@@ -320,14 +348,14 @@ $app->post('/validation', function() use ($app) {
 
     // Get environment
     $env = $app->environment();
-    
+
     // Get data the transaction data
     try {
         if($_POST['method'] == "direct"){
             if(empty($_POST['cgu'])){
                 throw new \Exception("Vous devez accepter les CGU de PayIcam pour continuer");
             }
-            
+
             $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->doTransaction(array(
                 'tra_id' => $_POST['tra_id'],
                 'token' => $_POST['token'],
@@ -348,13 +376,13 @@ $app->post('/validation', function() use ($app) {
     }
     catch(\Exception $e){
         $app->getLog()->error("Cannot do transaction ".$_POST['tra_id']." with token ".$_POST['token'].": ".$e->getType(). " -  ".$e->getMessage());
-        
+
         $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
         $app->render('error.php', array('login_erreur' => "Impossible de valider la transaction"));
         $app->render('footer.php');
         $app->stop();
     }
-    
+
     $app->redirect($nextUrl);
 });
 
@@ -367,20 +395,20 @@ $app->get('/validationReturn', function() use ($app) {
             $app->getLog()->error("No token recieved");
             throw new \Exception("No token received");
         }
-        
+
         $nextUrl = JsonClientFactory::getInstance()->getClient("WEBSALECONFIRM")->notificationPayline(array(
             'token_payline' => $_GET['token']
         ));
     }
     catch(\Exception $e){
         $app->getLog()->error("Cannot do notification with token ".$_GET['token'].": ".$e->getMessage());
-        
+
         $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin" => false));
         $app->render('error.php', array('login_erreur' => "Impossible de notifier la transaction"));
         $app->render('footer.php');
         $app->stop();
     }
-    
+
     $app->redirect($nextUrl);
 });
 
@@ -391,21 +419,21 @@ $app->get('/login', function() use ($app) {
         $app->getLog()->debug("No CAS ticket, unsetting cookies and redirecting to CAS");
         // On jette les cookies actuels
         JsonClientFactory::getInstance()->destroyCookie();
-        
+
         // If we have transaction parameters, save them
         if(!empty($_GET['tra_id']) && !empty($_GET['token'])){
             $app->getLog()->debug("Setting login redirect URL to validation");
-            
+
             $_SESSION['login_redirect'] = "validation?tra_id=".$_GET['tra_id']."&token=".$_GET['token'];
         }
-        
+
         // Redirection vers le CAS
         $app->redirect(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."login?service=".Config::get("casper_url").'login');
     } else {
         // Connexion au serveur avec le ticket CAS
         try {
             $app->getLog()->debug("Trying loginCas");
-            
+
             $result = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->loginCas(array(
                 "ticket" => $_GET["ticket"],
                 "service" => Config::get("casper_url").'login'
@@ -415,13 +443,13 @@ $app->get('/login', function() use ($app) {
             if($e->getType() == "Payutc\Exception\UserNotFound"){
                 // On doit garder le cookie car le serveur garde le login de son côté
                 JsonClientFactory::getInstance()->setCookie(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->cookie);
-                
+
                 // Redirection vers la charte
                 $app->redirect($app->urlFor('register'));
             }
-            
+
             $app->getLog()->warn("Error with CAS ticket ".$_GET["ticket"].": ".$e->getMessage());
-            
+
             // Affichage d'une page avec juste l'erreur
             $app->render('header.php', array("title" => Config::get("title", "payutc"), "loggedin"=>false));
             $app->render('error.php', array('login_erreur' => 'Erreur de login CAS<br /><a href="'.$app->urlFor('login').'">Réessayer</a>'));
@@ -431,14 +459,14 @@ $app->get('/login', function() use ($app) {
 
         // On stocke le cookie
         JsonClientFactory::getInstance()->setCookie(JsonClientFactory::getInstance()->getClient("MYACCOUNT")->cookie);
-            
+
         // Go vers la page d'accueil
         if(!empty($_SESSION['login_redirect'])){
             $url = $_SESSION['login_redirect'];
             unset($_SESSION['login_redirect']);
-            
+
             $app->getLog()->debug("Redirect after login: $url");
-            
+
             $app->redirect($url);
         }
         else {
@@ -450,24 +478,24 @@ $app->get('/login', function() use ($app) {
 $app->get('/logout', function() use ($app) {
     // On clot la session avec le serveur
     try {
-        JsonClientFactory::getInstance()->getClient("MYACCOUNT")->logout();        
+        JsonClientFactory::getInstance()->getClient("MYACCOUNT")->logout();
     }
     catch (\JsonClient\JsonException $e){
         // No worries, we'll just continue
     }
-    
+
     // Throw our cookies away
     JsonClientFactory::getInstance()->destroyCookie();
-    
+
     $logoutUrl = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->getCasUrl()."/logout";
-    
+
     // If we have transaction parameters, save them
     if(!empty($_GET['tra_id']) && !empty($_GET['token'])){
         $app->getLog()->debug("Setting logout redirect URL to validation");
-        
+
         $logoutUrl .= "?url=".urlencode(Config::get("casper_url")."validation?tra_id=".$_GET['tra_id']."&token=".$_GET['token']);
     }
-    
+
     // Logout from CAS
     $app->redirect($logoutUrl);
 })->name('logout');

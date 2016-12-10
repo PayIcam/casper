@@ -63,6 +63,9 @@ $app->get('/', function() use($app) {
 
     $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
 
+    $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();
+    $pageData["reloadsPapercut"] = json_decode($resultat, 1);
+
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
     $pageData["historique"] = $account->historique;
 

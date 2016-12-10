@@ -2,7 +2,7 @@
     <h1>Bonjour, <?php echo $userDetails["firstname"] ?> <?php echo $userDetails["lastname"] ?> !</h1>
     <br />
     <p>Ton solde PayIcam est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong></p>
-   
+
 </div>
 <div class="row">
     <div class="col-md-4">
@@ -32,13 +32,13 @@
                     <div class="col-xs-6">
                         <button type="submit" class="btn btn-primary "><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Recharger</button>
                     </div>
-                </div>                 
+                </div>
             </form>
         <?php else: ?>
             <div class="alert alert-success">
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
-        <?php endif ?> 
+        <?php endif ?>
 
 
         <h2><a name="rechargement_papercut" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Créditer PaperCut</a></h2>
@@ -50,7 +50,12 @@
                 <div class="alert alert-success"><?php echo $flash['reloadPaperCut_ok'] ?></div>
             <?php endif ?>
             <form action="reload_papercut" method="post" class="well form-inline" role="form">
-                <p>Solde PaperCut actuel: <strong><?= "20€" ?></strong></p>
+                <p>
+                    Somme rechargements PaperCut: <strong><?= $reloadsPapercut['amount'] ?>€</strong>
+                    <?php if (!empty($reloadsPapercut['waiting'])): ?>
+                        <br><small>Dont <?= $reloadsPapercut['waiting'] ?>€ en attente</small>
+                    <?php endif ?>
+                </p>
                 <div class="row">
                     <div class="col-xs-5">
                         <div class="input-group amount-container">
@@ -68,13 +73,13 @@
                     <div class="col-xs-6">
                         <button type="submit" class="btn btn-primary "><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Créditer</button>
                     </div>
-                </div>                 
+                </div>
             </form>
         <?php else: ?>
             <div class="alert alert-success">
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadPaperCutMessage ?>
             </div>
-        <?php endif ?> 
+        <?php endif ?>
 
         <h2><a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de PayIcam" class="noul">Virement à un ami </a></h2>
         <?php if(isset($flash['virement_ok'])): ?>
@@ -85,7 +90,7 @@
         <?php if(isset($flash['virement_erreur'])): ?>
             <div class="alert alert-danger">
                 <?php echo $flash['virement_erreur'] ?>
-            </div>		                
+            </div>
         <?php endif ?>
         <form action="virement" method="post" class="well form-horizontal">
             <div class="form-group">
@@ -117,7 +122,7 @@
         <?php endif ?>
         <div class="well">
             <p>
-                État du compte : 
+                État du compte :
                 <?php if($isBlocked): ?>
                     <span class="label label-danger">Bloqué <i class="glyphicon glyphicon-remove glyphicon glyphicon-white"></i></span>
                 <?php else: ?>

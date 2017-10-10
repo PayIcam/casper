@@ -41,8 +41,8 @@
         <?php endif ?>
 
 
-        <h2><a name="rechargement_papercut" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Créditer PaperCut</a></h2>
-        <?php if(!empty($canReloadPapercut)): ?>
+        <!-- <h2><a name="rechargement_papercut" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Créditer PaperCut</a></h2> -->
+        <?php  /* if(!empty($canReloadPapercut)): ?>
             <?php if(isset($flash['reloadPaperCut_erreur'])): ?>
                 <div class="alert alert-danger"><?php echo $flash['reloadPaperCut_erreur'] ?></div>
             <?php endif ?>
@@ -79,7 +79,7 @@
             <div class="alert alert-success">
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadPaperCutMessage ?>
             </div>
-        <?php endif ?>
+        <?php endif //*/ ?>
 
         <h2><a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de PayIcam" class="noul">Virement à un ami </a></h2>
         <?php if(isset($flash['virement_ok'])): ?>

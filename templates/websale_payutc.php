@@ -5,8 +5,8 @@
         <?php endif ?>
             <h1>Bonjour <?php echo $firstname ?></h1>
 
-            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via PayIcam.</p> 
-            
+            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via PayIcam.</p>
+
             <table class="table table-hover" id="opTable">
                 <tbody>
                     <?php foreach($purchases as $purchase): ?>
@@ -23,15 +23,15 @@
                     </tr>
                 </tbody>
             </table>
-            
+
             <p>Voici les opérations sur ton compte PayIcam :</p>
-            
+
             <form action="validation" method="post">
                 <input type="hidden" name="tra_id" value="<?php echo $_GET['tra_id'] ?>" />
                 <input type="hidden" name="token" value="<?php echo $_GET['token'] ?>" />
                 <input type="hidden" name="method" value="payutc" />
                 <input type="hidden" name="final" id="final" value="<?php echo ($solde-$total)/100 ?>">
-            
+
                 <table class="table table-hover" id="opTable">
                     <tbody>
                         <tr>
@@ -67,7 +67,7 @@
                             </td>
                             <td style="text-align:right">
                                 <div class="row">
-                                    <div class="col-xs-7 pull-right">
+                                    <div class="col-md-8 col-sm-9 col-xs-11 pull-right">
                                         <div class="input-group">
                                             <input id="montant" name="montant" type="number" placeholder="0,00" class="form-control" min="<?php echo $minChamp/100 ?>" max="<?php echo $maxChamp/100 ?>" value="<?php echo ($total > $solde) ? $minChamp/100 : 0 ?>" step="0.01"<?php echo ($total > $solde) ? '' : ' disabled="disabled"' ?> />
                                             <span class="input-group-addon">€</span>
@@ -98,6 +98,6 @@
                     </div>
                     <a class="btn btn-primary" href="<?php echo $logoutUrl ?>" title="Paiement transaction">Se déconnecter et choisir un autre moyen de paiement</a>
                 <?php endif ?>
-            </form> 
+            </form>
       </div>
 </div>

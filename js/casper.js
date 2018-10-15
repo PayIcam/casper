@@ -10,7 +10,7 @@ function init(){
   rows = historique.getElementsByTagName("tr");
   rowCount = rows.length;
   pages = Math.ceil(rowCount / pageSize);
-  
+
   if(pages<=10)
   {
     for ( var i=1; i <= pages; i++){
@@ -44,7 +44,7 @@ function selectPage(pageIndex){
     } else {
       start = pages - 5;
       end = pages + 1;
-      posCurrent = 5 - (pages - pageIndex); 
+      posCurrent = 5 - (pages - pageIndex);
     }
     if(start == 0)
       paging.innerHTML = "<li><a>" + "<<" + "</a></li>";
@@ -74,24 +74,24 @@ function selectPage(pageIndex){
   for (var idx =0; idx < current; idx++){
           rows[idx].style.display ='none';
   }
-  
+
   for (var idx = current; idx < next; idx++){
           rows[idx].style.display = 'table-row';
   }
-  
-  
+
+
   for (var idx = next; idx < rowCount; idx++){
           rows[idx].style.display ='none';
   }
 }
 
 Number.prototype.formatMoney = function(c, d, t){
-var n = this, 
-    c = isNaN(c = Math.abs(c)) ? 2 : c, 
-    d = d == undefined ? "," : d, 
-    t = t == undefined ? "" : t, 
-    s = n < 0 ? "-" : "+", 
-    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+var n = this,
+    c = isNaN(c = Math.abs(c)) ? 2 : c,
+    d = d == undefined ? "," : d,
+    t = t == undefined ? "" : t,
+    s = n < 0 ? "-" : "+",
+    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
     j = (j = i.length) > 3 ? j % 3 : 0;
    return s + " " + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "") + " €";
  };
@@ -115,14 +115,14 @@ $(document).ready(function(){
   $("#montant").change(updateCalcul);
 
   $("#boutons2").hide();
-  
+
   $("#noaccount").click(function(e){
     e.preventDefault();
     $("#gopay").attr("disabled", "disabled");
     $("#boutons1").hide();
     $("#boutons2").show();
   });
-  
+
   $("#cgu").change(function(){
     if($(this).is(":checked")){
       $("#gopay").removeAttr("disabled");
@@ -131,7 +131,7 @@ $(document).ready(function(){
       $("#gopay").attr("disabled", "disabled");
     }
   });
-  
+
   $("#reload").change(function(){
     if($(this).is(":checked")){
       $("#montant").removeAttr("disabled").val(10.00);
@@ -141,7 +141,7 @@ $(document).ready(function(){
     }
     updateCalcul();
   });
-  
+
   // --- Virement
   $('#userName').typeahead({
       source: function(input, process){
@@ -149,12 +149,12 @@ $(document).ready(function(){
           $.get('ajax', 'q='+input, function(data) {
               map = {};
               usernames = [];
-        
+
               $.each(JSON.parse(data), function (i, user) {
                   map[user.name] = user;
-                  usernames.push(user.name);
+                  usernames.push(user.name + ' (' + user.mail + ')');
               });
-        
+
               process(usernames);
           });
       },

@@ -151,8 +151,9 @@ $(document).ready(function(){
               usernames = [];
 
               $.each(JSON.parse(data), function (i, user) {
-                  map[user.name] = user;
-                  usernames.push(user.name + ' (' + user.mail + ')');
+                display = user.name + ' (' + user.mail + ')'
+                map[display] = user;
+                usernames.push(display);
               });
 
               process(usernames);

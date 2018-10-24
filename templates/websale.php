@@ -1,4 +1,11 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112368112-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-112368112-1');
+</script>
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <?php if(isset($flash['websale_error'])): ?>

@@ -11,6 +11,13 @@
     <link rel="shortcut icon" href="img/favicon.png" />
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112368112-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-112368112-1');
+    </script>
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/typeahead.min.js"></script>

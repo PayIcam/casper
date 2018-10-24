@@ -1,3 +1,4 @@
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-112368112-1"></script>
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <?php if(isset($flash['websale_error'])): ?>
@@ -5,8 +6,8 @@
         <?php endif ?>
             <h1>Bienvenue</h1>
 
-            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via PayIcam.</p> 
-            
+            <p>Tu vas réaliser un paiement à <em><?php echo $fundation ?></em> via PayIcam.</p>
+
             <form action="validation" method="post">
                 <input type="hidden" name="tra_id" value="<?php echo $_GET['tra_id'] ?>" />
                 <input type="hidden" name="token" value="<?php echo $_GET['token'] ?>" />
@@ -40,6 +41,6 @@
                     </p>
                     <p><input type="submit" class="btn btn-primary" value="Payer par CB" id="gopay" /></p>
                 </div>
-            </form> 
+            </form>
       </div>
 </div>

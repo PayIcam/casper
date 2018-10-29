@@ -24,3 +24,12 @@ $_CONFIG['slim_config'] = array(
         'message_format' => '%label% - %date% - %message%'
     ))
 );
+
+$_CONFIG["PHPMailer"] => array(
+    "Host" => "",
+    "SMTPAuth" => "",
+    "Username" => "",
+    "Password" => "",
+    "SMTPSecure" => "",
+    "Port" => ""
+);

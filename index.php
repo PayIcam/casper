@@ -66,14 +66,17 @@ $app->get('/', function() use($app) {
     $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();
     $pageData["reloadsPapercut"] = json_decode($resultat, 1);
 
+
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
     $pageData["historique"] = $account->historique;
 
     $env = $app->environment();
+
     $pageData["userDetails"] = array(
         "firstname" => $env["user_data"]->firstname,
         "lastname" => $env["user_data"]->lastname,
-        "credit" => $account->credit
+        "credit" => $account->credit,
+        "credit_ecocup" => $account->credit_ecocup
     );
 
     $app->render('main.php', $pageData);
@@ -208,6 +211,57 @@ $app->post('/virement', function() use ($app) {
             "userID" => $_POST['userId'],
             "message" => $_POST['message']
         ));
+
+        $sender = $app->environment()['user_data'];
+        $receiver_email = JsonClientFactory::getInstance()->getClient("TRANSFER")->getUserEmail(array("usr_id" => $_POST['userId']));
+
+
+        $mail = new PHPMailer;
+        $mailer_config = Config::get('PHPMailer');
+
+        $mail->isSMTP();                         // Set mailer to use SMTP
+        $mail->Host = $mailer_config['Host'];             // Specify main and backup SMTP servers
+        $mail->SMTPAuth = $mailer_config['SMTPAuth'];     // Enable SMTP authentication
+        $mail->Username = $mailer_config['Username'];     // SMTP username
+        $mail->Password = $mailer_config['Password'];     // SMTP password
+        $mail->SMTPSecure = $mailer_config['SMTPSecure']; // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = $mailer_config['Port'];             // TCP port to connect to
+        $mail->Encoding = 'base64';
+        $mail->CharSet = 'UTF-8';
+
+        $mail->setFrom('contact.payicam@gmail.com', 'Contact PayIcam');
+
+        $mail->addAddress($receiver_email);
+
+        $mail->isHTML(true);
+
+        $subject = 'Virement reçu de la part de '.$sender->firstname . ' ' . $sender->lastname;
+        $message = empty($_POST['message']) ? '' : 'Son message : ' . $_POST['message'];
+        $mail->Subject = $subject;
+        $mail->Body    = '<html>
+            <head>
+                <meta charset="utf-8">
+                <title>'.$subject.'</title>
+            </head>
+            <body>
+                <h1>'.$subject.'</h1>
+                <p>Tu as reçu ' . format_amount($montant) . '€ de la part de ' . $sender->firstname . ' ' . $sender->lastname . '</p>
+                <p>' . $message . '</p>
+                <p>A bientôt,</p>
+                <p><em>PayIcam</em></p>
+            </body>
+        </html>
+        ';
+
+        $mail->AltBody = $subject."\n".
+            'Tu as reçu ' . format_amount($montant) . '€ de la part de ' . $sender->firstname . ' ' . $sender->lastname ."\n".
+            $message .
+            'A bientôt,'."\n".
+            "PayIcam";
+
+        if(!$mail->send()) {
+            $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € a réussi. Le mail automatique a toutefois échoué... Prévenez votre ami tout seul, et signalez nous le bug :)');
+        }
 
         $app->flash('virement_ok', 'Le virement de '.format_amount($montant).' € a réussi.');
     }

@@ -1,7 +1,10 @@
 <div class="jumbotron">
     <h1>Bonjour, <?php echo $userDetails["firstname"] ?> <?php echo $userDetails["lastname"] ?> !</h1>
     <br />
-    <p>Ton solde PayIcam est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong></p>
+    <p>
+        Ton solde PayIcam est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong><br>
+        Ton solde d'ecocups est de <strong><?php echo $userDetails["credit_ecocup"] ?> </strong>
+    </p>
 
 </div>
 <div class="row">
@@ -146,6 +149,9 @@
                 <tr>
                     <td>
                         <?php echo date('d/m/y H:i:s', strtotime($elt->date)) ?>
+                    </td>
+                    <td>
+                        <?php echo $elt->quantity ?>
                     </td>
                     <?php if($elt->type == "PURCHASE"): ?>
                         <td>

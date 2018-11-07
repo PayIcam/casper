@@ -229,7 +229,7 @@ $app->post('/virement', function() use ($app) {
         $mail->Encoding = 'base64';
         $mail->CharSet = 'UTF-8';
 
-        $mail->setFrom('contact.payicam@gmail.com', 'Contact PayIcam');
+        $mail->setFrom('noreply.payicam@gmail.com', 'No Reply PayIcam');
 
         $mail->addAddress($receiver_email);
 

@@ -4,8 +4,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
-
 // Slim
 require 'vendor/autoload.php';
 use \Payutc\Casper\Config;
@@ -137,6 +135,7 @@ $app->post('/reload', function() use ($app) {
             "amount" => $amount,
             "callbackUrl" => Config::get("casper_url")
         ));
+        $app->flash('indice_gala', "Dumbledore aurait été très fier de toi ! c’est pourquoi je n’utiliserai que ces dernières paroles : Harryy !! De l’eau.");
         $app->redirect($reloadUrl);
     }
     catch(\JsonClient\JsonException $e){

@@ -7,6 +7,10 @@
     </p>
 
 </div>
+
+<?php if(isset($flash['indice_gala'])): ?>
+    <div class="alert alert-success"><?php echo $flash['indice_gala'] ?></div>
+<?php endif ?>
 <div class="row">
     <div class="col-md-4">
         <h2><a name="rechargement" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Rechargement</a></h2>

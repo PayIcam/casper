@@ -14,8 +14,8 @@ $_CONFIG["application_key"] = "";
 
 // Configuration de Slim
 $_CONFIG['slim_config'] = array(
-    'mode' => 'developement',
-    'debug' => true,
+    'mode' => 'prod',
+    'debug' => false,
     'log.level' => \Slim\Log::DEBUG,
     'log.enabled' => true,
     'log.writer' => new \Slim\Extras\Log\DateTimeFileWriter(array(

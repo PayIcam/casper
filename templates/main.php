@@ -3,7 +3,9 @@
     <br />
     <p>
         Ton solde PayIcam est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong><br>
-        Ton solde d'ecocups est de <strong><?php echo $userDetails["credit_ecocup"] ?> </strong>
+        Ton solde d'event est de <strong><?php echo format_amount($userDetails["credit_event"]) ?> €</strong><br>
+        Ton solde d'ecocups est de <strong><?php echo $userDetails["credit_ecocup"] ?> </strong><br>
+        Ton solde d'ecocups de soirée est de <strong><?php echo $userDetails["credit_ecocup_soiree"] ?> </strong><br>
     </p>
 
 </div>
@@ -148,54 +150,136 @@
 <div class="col-md-8" >
     <h2>Historique</h2>
     <div>
-        <table id='historique' class='table table-striped'>
-            <?php foreach($historique as $elt): ?>
-                <tr>
-                    <td>
-                        <?php echo date('d/m/y H:i:s', strtotime($elt->date)) ?>
-                    </td>
-                    <td>
-                        <?php echo $elt->quantity ?>
-                    </td>
-                    <?php if($elt->type == "PURCHASE"): ?>
-                        <td>
-                            <?php echo $elt->name ?> <small><?php echo $elt->fun ?></small>
-                        </td>
-                        <td class="debit">
-                            - <?php echo format_amount($elt->amount) ?> €
-                        </td>
-                    <?php elseif($elt->type == "RECHARGE"): ?>
-                        <td>
-                            Rechargement
-                        </td>
-                        <td class="credit">
-                             + <?php echo format_amount($elt->amount) ?> €
-                        </td>
-                    <?php elseif($elt->type == "VIRIN"): ?>
-                        <td>
-                            Virement de <?php echo $elt->firstname ?> <?php echo $elt->lastname ?>
-                            <?php if(!empty($elt->name)): ?>
-                                 (<?php echo $elt->name ?>)
-                             <?php endif ?>
-                        </td>
-                        <td class="credit">
-                            + <?php echo format_amount($elt->amount)?> €
-                        </td>
-                    <?php elseif($elt->type == "VIROUT"): ?>
-                        <td>
-                            Virement à <?php echo $elt->firstname ?> <?php echo $elt->lastname ?>
-                            <?php if(!empty($elt->name)): ?>
-                                 (<?php echo $elt->name ?>)
-                             <?php endif ?>
-                         </td>
-                        <td class="debit">
-                            - <?php echo format_amount($elt->amount)?> €
-                        </td>
-                    <?php endif ?>
-                </tr>
-            <?php endforeach ?>
-        </table>
-        <div class="center"><ul id="paging" class="pagination"></ul></div>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#payicam" aria-controls="home" role="tab" data-toggle="tab">Historique PayIcam</a></li>
+                <li role="presentation"><a href="#event" aria-controls="profile" role="tab" data-toggle="tab">Historique Event</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="payicam">
+                    <table id='historique' class='table table-striped table-bordered'>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Quantité</th>
+                                <th>Article</th>
+                                <th>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($historique as $elt): ?>
+                                <tr>
+                                    <td>
+                                        <?php echo date('d/m/y H:i:s', strtotime($elt->date)) ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $elt->quantity ?>
+                                    </td>
+                                    <?php if($elt->type == "PURCHASE"): ?>
+                                        <td>
+                                            <?php echo $elt->name ?> <small><?php echo $elt->fun ?></small>
+                                        </td>
+                                        <td class="debit">
+                                            - <?php echo format_amount($elt->amount) ?> €
+                                        </td>
+                                    <?php elseif($elt->type == "RECHARGE"): ?>
+                                        <td>
+                                            Rechargement
+                                        </td>
+                                        <td class="credit">
+                                             + <?php echo format_amount($elt->amount) ?> €
+                                        </td>
+                                    <?php elseif($elt->type == "VIRIN"): ?>
+                                        <td>
+                                            Virement de <?php echo $elt->firstname ?> <?php echo $elt->lastname ?>
+                                            <?php if(!empty($elt->name)): ?>
+                                                 (<?php echo $elt->name ?>)
+                                             <?php endif ?>
+                                        </td>
+                                        <td class="credit">
+                                            + <?php echo format_amount($elt->amount)?> €
+                                        </td>
+                                    <?php elseif($elt->type == "VIROUT"): ?>
+                                        <td>
+                                            Virement à <?php echo $elt->firstname ?> <?php echo $elt->lastname ?>
+                                            <?php if(!empty($elt->name)): ?>
+                                                 (<?php echo $elt->name ?>)
+                                             <?php endif ?>
+                                         </td>
+                                        <td class="debit">
+                                            - <?php echo format_amount($elt->amount)?> €
+                                        </td>
+                                    <?php endif ?>
+                                </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                    </table>
+                    <div class="center"><ul id="paging" class="pagination"></ul></div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="event">
+                    <table id='historique' class='table table-striped table-bordered'>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Quantité</th>
+                                <th>Article</th>
+                                <th>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($historique_event as $elt): ?>
+                                <tr>
+                                    <td>
+                                        <?php echo date('d/m/y H:i:s', strtotime($elt->date)) ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $elt->quantity ?>
+                                    </td>
+                                    <?php if($elt->type == "PURCHASE"): ?>
+                                        <td>
+                                            <?php echo $elt->name ?> <small><?php echo $elt->fun ?></small>
+                                        </td>
+                                        <td class="debit">
+                                            - <?php echo format_amount($elt->amount) ?> €
+                                        </td>
+                                    <?php elseif($elt->type == "RECHARGE"): ?>
+                                        <td>
+                                            Rechargement
+                                        </td>
+                                        <td class="credit">
+                                             + <?php echo format_amount($elt->amount) ?> €
+                                        </td>
+                                    <?php elseif($elt->type == "VIRIN"): ?>
+                                        <td>
+                                            Virement de <?php echo $elt->firstname ?> <?php echo $elt->lastname ?>
+                                            <?php if(!empty($elt->name)): ?>
+                                                 (<?php echo $elt->name ?>)
+                                             <?php endif ?>
+                                        </td>
+                                        <td class="credit">
+                                            + <?php echo format_amount($elt->amount)?> €
+                                        </td>
+                                    <?php elseif($elt->type == "VIROUT"): ?>
+                                        <td>
+                                            Virement à <?php echo $elt->firstname ?> <?php echo $elt->lastname ?>
+                                            <?php if(!empty($elt->name)): ?>
+                                                 (<?php echo $elt->name ?>)
+                                             <?php endif ?>
+                                         </td>
+                                        <td class="debit">
+                                            - <?php echo format_amount($elt->amount)?> €
+                                        </td>
+                                    <?php endif ?>
+                                </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                    </table>
+                    <div class="center"><ul id="paging_event" class="pagination"></ul></div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 <script type="text/javascript">

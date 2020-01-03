@@ -66,7 +66,9 @@ $app->get('/', function() use($app) {
 
 
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
+
     $pageData["historique"] = $account->historique;
+    $pageData["historique_event"] = $account->historique_event;
 
     $env = $app->environment();
 
@@ -74,7 +76,9 @@ $app->get('/', function() use($app) {
         "firstname" => $env["user_data"]->firstname,
         "lastname" => $env["user_data"]->lastname,
         "credit" => $account->credit,
-        "credit_ecocup" => $account->credit_ecocup
+        "credit_event" => $account->credit_event,
+        "credit_ecocup" => $account->credit_ecocup,
+        "credit_ecocup_soiree" => $account->credit_ecocup_soiree,
     );
 
     $app->render('main.php', $pageData);

@@ -90,7 +90,7 @@ $app->get('/', function() use($app) {
 $app->get('/block', function() use ($app) {
     try {
         JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
-            "blocage" => true
+            "blocage" => 1
         ));
     }
     catch(\JsonClient\JsonException $e){

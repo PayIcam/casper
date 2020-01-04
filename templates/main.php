@@ -3,11 +3,14 @@
     <br />
     <p>
         Ton solde PayIcam est de <strong><?php echo format_amount($userDetails["credit"]) ?> €</strong><br>
-        Ton solde d'event est de <strong><?php echo format_amount($userDetails["credit_event"]) ?> €</strong><br>
+        <?php if ($userDetails['credit_event'] != 0): ?>
+            Ton solde d'event est de <strong><?php echo format_amount($userDetails["credit_event"]) ?> €</strong><br>
+        <?php endif; ?>
         Ton solde d'ecocups est de <strong><?php echo $userDetails["credit_ecocup"] ?> </strong><br>
-        Ton solde d'ecocups de soirée est de <strong><?php echo $userDetails["credit_ecocup_soiree"] ?> </strong><br>
+        <?php if ($userDetails['credit_ecocup_soiree'] != 0): ?>
+            Ton solde d'ecocups de soirée est de <strong><?php echo $userDetails["credit_ecocup_soiree"] ?> </strong><br>
+        <?php endif; ?>
     </p>
-
 </div>
 
 <?php if(isset($flash['indice_gala'])): ?>

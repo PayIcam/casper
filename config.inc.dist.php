@@ -33,3 +33,5 @@ $_CONFIG["PHPMailer"] => array(
     "SMTPSecure" => "",
     "Port" => ""
 );
+
+$_CONFIG['canReloadEvent'] = false;

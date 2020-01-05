@@ -49,6 +49,7 @@ $app->get('/', function() use($app) {
 
     $pageData["canReload"] = true;
     $pageData["canReloadPapercut"] = true;
+    $pageData["canReloadEvent"] = Config::get('canReloadEvent');
     try {
         $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
         $pageData["maxReload"] = $reloadInfo->max_reload;
@@ -64,8 +65,14 @@ $app->get('/', function() use($app) {
     $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();
     $pageData["reloadsPapercut"] = json_decode($resultat, 1);
 
-
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
+
+    $pageData["cannotReloadEventMessage"] = false;
+    if ($account->credit < 1000) {
+        $pageData["cannotReloadEventMessage"] = "On ne peut recharger que par tranches d'au moins 10 euros. Rechargez votre solde PayIcam.";
+    } else if ($account->credit_event > 24000) {
+        $pageData["cannotReloadEventMessage"] = "On ne peut recharger plus de 250 euros sur le solde event.";
+    }
 
     $pageData["historique"] = $account->historique;
     $pageData["historique_event"] = $account->historique_event;
@@ -150,53 +157,54 @@ $app->post('/reload', function() use ($app) {
     }
 });
 
-$app->post('/reload_papercut', function() use ($app) {
-    if(empty($_POST["montant"])) {
-        $app->flash('error_reload', "Saisissez un montant");
+$app->post('/reload_event', function() use ($app) {
+    if (!Config::get("canReloadEvent")) {
+        return $app->response()->redirect($app->urlFor('home'));
+    }
+    if(empty($_POST["amount"])) {
+        $app->flash('reload_event_erreur', "Saisissez un montant");
         $app->response()->redirect($app->urlFor('home'));
     }
 
     $status = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getStatus();
-    $isCotisant = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isCotisant();
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
     $account->credit;
 
-    $amount = parse_user_amount($_POST['montant']);
+    $amount = $_POST['amount'];
 
-    if(!$isCotisant) {
-        $app->flash('reloadPaperCut_erreur', "Les non cotisants ne peuvent pas utiliser la fonction reloadPapercut.");
-    } else if($amount < 0) {
-        $app->flash('reloadPaperCut_erreur', "Tu ne peux pas faire un virement négatif (bien essayé)");
+    if($amount < 0) {
+        $app->flash('reload_event_erreur', "Tu ne peux pas faire un virement négatif (bien essayé)");
     } else if($amount == 0) {
-        $app->flash('reloadPaperCut_erreur', "Pas de montant saisi");
+        $app->flash('reload_event_erreur', "Pas de montant saisi");
     } else if($account->credit < $amount) {
-        $app->flash('reloadPaperCut_erreur', "Tu n'as pas assez d'argent pour réaliser ce virement");
+        $app->flash('reload_event_erreur', "Tu n'as pas assez d'argent pour réaliser ce virement");
     } else {
         // Connect the application if required
         if(empty($status->application)){
             $app->getLog()->debug("No app logged in for WEBSALECONFIRM, calling loginApp");
             try {
-                JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->loginApp(array(
+                JsonClientFactory::getInstance()->getClient("RELOADEVENT")->loginApp(array(
                     "key" => Config::get("application_key")
                 ));
             } catch (\JsonClient\JsonException $e) {
-                $app->getLog()->error("Application login error for RELOADPAPERCUT: ".$e->getMessage());
+                $app->getLog()->error("Application login error for RELOADEVENT: ".$e->getMessage());
                 throw $e;
             }
         }
 
         try {
-            $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->reload_papercut(array(
+            $resultat = JsonClientFactory::getInstance()->getClient("RELOADEVENT")->reloadPayIcam(array(
                 "amount" => $amount*1
             ));
             if ($resultat == $amount)
-                $app->flash('reloadPaperCut_ok', 'Le virement de '.format_amount($resultat).' € a réussi.');
-            else
-                $app->flash('reloadPaperCut_erreur', "qqch de louche s'est passé: ".$resultat);
+                $app->flash('reload_event_ok', 'Le virement de '.format_amount($resultat).' € a réussi.');
+            else {
+                $app->flash('reload_event_erreur', "Quelque chose de louche s'est passé.".$resultat);
+            }
         } catch(\JsonClient\JsonException $e) {
             echo $e->getMessage();
-            $app->flash('reloadPaperCut_erreur', $e->getMessage());
-            $app->flash('reloadPaperCut_value', abs($amount/100));
+            $app->flash('reload_event_erreur', $e->getMessage());
+            $app->flash('reload_event_value', abs($amount/100));
         }
     }
 

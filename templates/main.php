@@ -53,45 +53,50 @@
         <?php endif ?>
 
 
-        <!-- <h2><a name="rechargement_papercut" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Créditer PaperCut</a></h2> -->
-        <?php  /* if(!empty($canReloadPapercut)): ?>
-            <?php if(isset($flash['reloadPaperCut_erreur'])): ?>
-                <div class="alert alert-danger"><?php echo $flash['reloadPaperCut_erreur'] ?></div>
-            <?php endif ?>
-            <?php if(isset($flash['reloadPaperCut_ok'])): ?>
-                <div class="alert alert-success"><?php echo $flash['reloadPaperCut_ok'] ?></div>
-            <?php endif ?>
-            <form action="reload_papercut" method="post" class="well form-inline" role="form">
-                <p>
-                    Somme rechargements PaperCut: <strong><?= $reloadsPapercut['amount'] ?>€</strong>
-                    <?php if (!empty($reloadsPapercut['waiting'])): ?>
-                        <br><small>Dont <?= $reloadsPapercut['waiting'] ?>€ en attente</small>
-                    <?php endif ?>
-                </p>
-                <div class="row">
-                    <div class="col-xs-5">
-                        <div class="input-group amount-container">
-                            <?php
-                            if(isset($flash['reloadPaperCut_value'])) {
-                                $reload_value = $flash['reloadPaperCut_value'];
-                            } else {
-                                $reload_value = "";
-                            }
-                            ?>
-                            <input name="montant" type="number" placeholder="0,00" class="form-control amount-selector" max="<?php echo $userDetails["credit"]?>" value="<?php echo $reload_value ?>" step="0.05" />
-                            <span class="input-group-addon">€</span>
+        <?php if ($canReloadEvent): ?>
+            <h2><a name="rechargement_papercut" rel="tooltip" data-placement="bottom" data-original-title="Recharger ton compte par Carte Bancaire" class="noul">Recharger le solde event</a></h2>
+            <?php if ($cannotReloadEventMessage === false): ?>
+                <?php if(isset($flash['reload_event_erreur'])): ?>
+                    <div class="alert alert-danger"><?php echo $flash['reload_event_erreur'] ?></div>
+                <?php endif ?>
+                <?php if(isset($flash['reload_event_ok'])): ?>
+                    <div class="alert alert-success"><?php echo $flash['reload_event_ok'] ?></div>
+                <?php endif ?>
+                <form action="reload_event" method="post" class="well form-inline" role="form">
+                    <p>
+                        <?php if (!empty($reloadEvent['waiting'])): ?>
+                            <br><small><?= $reloadEvent['waiting'] ?>€ en attente</small>
+                        <?php endif ?>
+                    </p>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="input-group amount-container">
+                                <?php
+                                if(isset($flash['reload_event_value'])) {
+                                    $reload_value = $flash['reload_event_value'];
+                                } else {
+                                    $reload_value = "";
+                                }
+                                $amount=10; ?>
+                                <select class="form-control" name="amount" id="reload_event">
+                                    <?php while ($userDetails["credit"] > $amount*100 and $amount*100 + $userDetails["credit_event"] < 25000 and $amount <= 100) {
+                                        echo "<option value=". $amount*100 . ">".$amount."€</option>";
+                                        $amount += 10;
+                                    } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <button type="submit" class="btn btn-primary "><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Créditer</button>
                         </div>
                     </div>
-                    <div class="col-xs-6">
-                        <button type="submit" class="btn btn-primary "><i class="glyphicon glyphicon-shopping-cart glyphicon glyphicon-white"></i> Créditer</button>
-                    </div>
+                </form>
+            <?php else: ?>
+                <div class="alert alert-warning">
+                    <?php echo $cannotReloadEventMessage ?>
                 </div>
-            </form>
-        <?php else: ?>
-            <div class="alert alert-success">
-                Ton compte ne peut être rechargé : <?php echo $cannotReloadPaperCutMessage ?>
-            </div>
-        <?php endif //*/ ?>
+            <?php endif; ?>
+        <?php endif; ?>
 
         <h2><a name="virement" rel="tooltip" data-placement="bottom" data-original-title="Transférer gratuitement de l'argent à un autre utilisateur de PayIcam" class="noul">Virement à un ami </a></h2>
         <?php if(isset($flash['virement_ok'])): ?>

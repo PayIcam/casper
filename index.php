@@ -62,8 +62,8 @@ $app->get('/', function() use($app) {
 
     $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
 
-    $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();
-    $pageData["reloadsPapercut"] = json_decode($resultat, 1);
+    // $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();
+    // $pageData["reloadsPapercut"] = json_decode($resultat, 1);
 
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
 
@@ -166,7 +166,7 @@ $app->post('/reload_event', function() use ($app) {
         $app->response()->redirect($app->urlFor('home'));
     }
 
-    $status = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getStatus();
+    $status = JsonClientFactory::getInstance()->getClient("RELOADEVENT")->getStatus();
     $account = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->historique();
     $account->credit;
 

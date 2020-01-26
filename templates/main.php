@@ -79,7 +79,7 @@
                                 }
                                 $amount=10; ?>
                                 <select class="form-control" name="amount" id="reload_event">
-                                    <?php while ($userDetails["credit"] > $amount*100 and $amount*100 + $userDetails["credit_event"] < 25000 and $amount <= 100) {
+                                    <?php while ($userDetails["credit"] >= $amount*100 and $amount*100 + $userDetails["credit_event"] < 25000 and $amount <= 100) {
                                         echo "<option value=". $amount*100 . ">".$amount."€</option>";
                                         $amount += 10;
                                     } ?>

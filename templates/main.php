@@ -245,7 +245,7 @@
                                     </td>
                                     <?php if($elt->type == "PURCHASE"): ?>
                                         <td>
-                                            <?php echo $elt->name ?> <small><?php echo $elt->fun ?></small>
+                                            <?php echo $elt->name ?> <small><?php echo $elt->fun ?> - <?php echo $elt->category_name ?></small>
                                         </td>
                                         <td class="debit">
                                             - <?php echo format_amount($elt->amount) ?> €

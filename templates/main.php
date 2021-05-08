@@ -13,6 +13,12 @@
     </p>
 </div>
 
+<?php if(isset($flash['fermeture'])): ?>
+    <div class="alert alert-danger">
+        <?php echo $flash['virement_ok'] ?>
+    </div>
+<?php endif ?>
+
 <?php if(isset($flash['indice_gala'])): ?>
     <div class="alert alert-success"><?php echo $flash['indice_gala'] ?></div>
 <?php endif ?>
@@ -47,7 +53,7 @@
                 </div>
             </form>
         <?php else: ?>
-            <div class="alert alert-success">
+            <div class="alert alert-danger">
                 Ton compte ne peut être rechargé : <?php echo $cannotReloadMessage ?>
             </div>
         <?php endif ?>

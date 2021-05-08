@@ -47,20 +47,20 @@ $app->get('/', function() use($app) {
     // The array that will be sent to the template
     $pageData = array();
 
-    $pageData["canReload"] = true;
-    $pageData["canReloadPapercut"] = true;
-    $pageData["canReloadEvent"] = Config::get('canReloadEvent');
+    $pageData["canReload"] = false;
+    $pageData["canReloadPapercut"] = false;
+    $pageData["canReloadEvent"] = false;
     try {
-        $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
-        $pageData["maxReload"] = $reloadInfo->max_reload;
-        $pageData["minReload"] = $reloadInfo->min;
+        // $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
+        $pageData["maxReload"] = 0;
+        $pageData["minReload"] = 0;
     }
     catch(\JsonClient\JsonException $e){
         $pageData["canReload"] = false;
         $pageData["cannotReloadMessage"] = $e->getMessage();
     }
 
-    $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
+    // $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
 
     // $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();
     // $pageData["reloadsPapercut"] = json_decode($resultat, 1);
@@ -95,6 +95,9 @@ $app->get('/', function() use($app) {
 
 // Blocage du compte
 $app->get('/block', function() use ($app) {
+    header('Location: casper');
+    die();
+
     try {
         JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
             "blocage" => 1
@@ -109,6 +112,9 @@ $app->get('/block', function() use ($app) {
 
 // Déblocage du compte
 $app->get('/unblock', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     try {
         JsonClientFactory::getInstance()->getClient("MYACCOUNT")->setSelfBlock(array(
             "blocage" => 0
@@ -123,6 +129,9 @@ $app->get('/unblock', function() use ($app) {
 
 // Autocomplete du virement
 $app->get('/ajax', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     if(!empty($_GET["q"])) {
         $search = JsonClientFactory::getInstance()->getClient("RELOAD")->userAutocomplete(array(
             "queryString" => $_GET["q"]
@@ -134,6 +143,9 @@ $app->get('/ajax', function() use ($app) {
 
 // Départ vers le rechargement
 $app->post('/reload', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     if(empty($_POST["montant"])) {
         $app->flash('error_reload', "Saisissez un montant");
         $app->response()->redirect($app->urlFor('home'));
@@ -158,6 +170,9 @@ $app->post('/reload', function() use ($app) {
 });
 
 $app->post('/reload_event', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     if (!Config::get("canReloadEvent")) {
         return $app->response()->redirect($app->urlFor('home'));
     }
@@ -213,6 +228,9 @@ $app->post('/reload_event', function() use ($app) {
 
 // Virement à un ami
 $app->post('/virement', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     // Récupèration du montant en cents
     $montant = parse_user_amount($_POST['montant']);
 
@@ -288,6 +306,9 @@ $app->post('/virement', function() use ($app) {
 
 // Affichage de la charte
 $app->get('/register', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     $app->render('header.php', array(
         "title" => Config::get("title"),
         "loggedin" => true
@@ -300,6 +321,9 @@ $app->get('/register', function() use ($app) {
 
 // Enregistrement après validation de la charte
 $app->post('/register', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     try {
         // Appel serveur
         $result = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->register();
@@ -321,6 +345,9 @@ $app->post('/register', function() use ($app) {
 
 // Initial access
 $app->get('/validation', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     // If no transaction data, go home
     if(empty($_GET['tra_id']) || empty($_GET['token'])){
         $app->getLog()->error("No transaction data recieved");
@@ -408,6 +435,9 @@ $app->get('/validation', function() use ($app) {
 
 // Submit of payment form
 $app->post('/validation', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     // If no transaction data, go home
     if(empty($_POST['tra_id']) || empty($_POST['token']) || empty($_POST['method'])){
         $app->getLog()->error("No transaction data recieved");
@@ -456,6 +486,9 @@ $app->post('/validation', function() use ($app) {
 
 // Return from payline
 $app->get('/validationReturn', function() use ($app) {
+    header('Location: /casper');
+    die();
+
     // Get data the transaction data
     try {
         // If no token, fail

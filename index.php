@@ -62,6 +62,7 @@ $app->get('/', function() use($app) {
         $pageData["cannotReloadMessage"] = $e->getMessage();
     }
 
+    $pageData["isBlocked"] = false;
     // $pageData["isBlocked"] = JsonClientFactory::getInstance()->getClient("MYACCOUNT")->isBlockedMe();
 
     // $resultat = JsonClientFactory::getInstance()->getClient("RELOADPAPERCUT")->getSoldePaperCut();

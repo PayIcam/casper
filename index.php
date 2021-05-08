@@ -50,6 +50,8 @@ $app->get('/', function() use($app) {
     $pageData["canReload"] = false;
     $pageData["canReloadPapercut"] = false;
     $pageData["canReloadEvent"] = false;
+    $pageData["cannotReloadMessage"] = "PayIcam ferme ! Transfert des soldes des étudiants Icam Lille vers la nouvelle solution en cours.";
+
     try {
         // $reloadInfo = JsonClientFactory::getInstance()->getClient("RELOAD")->info();
         $pageData["maxReload"] = 0;

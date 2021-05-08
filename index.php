@@ -98,7 +98,8 @@ $app->get('/', function() use($app) {
 
 // Blocage du compte
 $app->get('/block', function() use ($app) {
-    header('Location: casper');
+    $app->flash('fermeture', 'PayIcam ferme.');
+    header('Location: /casper');
     die();
 
     try {
@@ -115,6 +116,7 @@ $app->get('/block', function() use ($app) {
 
 // Déblocage du compte
 $app->get('/unblock', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -132,6 +134,7 @@ $app->get('/unblock', function() use ($app) {
 
 // Autocomplete du virement
 $app->get('/ajax', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -146,6 +149,7 @@ $app->get('/ajax', function() use ($app) {
 
 // Départ vers le rechargement
 $app->post('/reload', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -173,6 +177,7 @@ $app->post('/reload', function() use ($app) {
 });
 
 $app->post('/reload_event', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -231,6 +236,7 @@ $app->post('/reload_event', function() use ($app) {
 
 // Virement à un ami
 $app->post('/virement', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -309,6 +315,7 @@ $app->post('/virement', function() use ($app) {
 
 // Affichage de la charte
 $app->get('/register', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -324,6 +331,7 @@ $app->get('/register', function() use ($app) {
 
 // Enregistrement après validation de la charte
 $app->post('/register', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -348,6 +356,7 @@ $app->post('/register', function() use ($app) {
 
 // Initial access
 $app->get('/validation', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -438,6 +447,7 @@ $app->get('/validation', function() use ($app) {
 
 // Submit of payment form
 $app->post('/validation', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
@@ -489,6 +499,7 @@ $app->post('/validation', function() use ($app) {
 
 // Return from payline
 $app->get('/validationReturn', function() use ($app) {
+    $app->flash('fermeture', 'PayIcam ferme.');
     header('Location: /casper');
     die();
 
